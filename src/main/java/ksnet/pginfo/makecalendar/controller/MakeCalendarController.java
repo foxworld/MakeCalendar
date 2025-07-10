@@ -21,10 +21,11 @@ public class MakeCalendarController implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("PG Make Calendar!!!");
 
-        if (countryCode.equals("ALL")) {
-            service.makeCalendar(year);
-        } else {
-            service.makeCalendar(countryCode, year);
+        switch (countryCode) {
+            case "TEST" -> log.info("TEST!!");
+            case "ALL" -> service.makeCalendar(year);
+            case "USA","JPN","KOR","SGP","HKG","CHN" -> service.makeCalendar(countryCode, year);
+            default -> log.info("미지원하는 국가코드 입니다. 국가코드:{}", countryCode);
         }
     }
 }
