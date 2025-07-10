@@ -1,7 +1,9 @@
 package ksnet.pginfo.makecalendar.servicee;
 
 import ksnet.pginfo.makecalendar.domain.PgCal02;
+import ksnet.pginfo.makecalendar.domain.PgCal03;
 import ksnet.pginfo.makecalendar.repository.PgCal02Repository;
+import ksnet.pginfo.makecalendar.repository.PgCal03Repository;
 import ksnet.pginfo.makecalendar.utils.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MakeCalendarService {
 
-    private final PgCal02Repository repository;
+    private final PgCal02Repository pgCal02Repository;
+    private final PgCal03Repository pgCal03Repository;
     private final KoreaHolidayScraper koreaHolidayScraper;
     private final UsHolidayScraper usHolidayScraper;
     private final SingaporeHolidayScraper singaporeHolidayScraper;
@@ -66,7 +69,8 @@ public class MakeCalendarService {
             }
         }
         for(Holiday holiday : holidayList) {
-            repository.setHoliday(countryCode.name(), holiday.getDate(), "Y");
+            pgCal02Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y");
+            pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
         }
     }
 
@@ -83,11 +87,18 @@ public class MakeCalendarService {
                     (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N")
             );
 
-            repository.save(pgCal02);
-            log.info("{}:{}", i++, pgCal02);
+            pgCal02Repository.save(pgCal02);
+
+            PgCal03 pgCal03 = new PgCal03(
+                    countryCode.name(),
+                    startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+                    Integer.toString(startDate.getDayOfWeek().getValue()-1),
+                    (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N")
+            );
+            pgCal03Repository.save(pgCal03);
+
             startDate = startDate.plusDays(1); // 하루 증가
         }
     }
-
 
 }

@@ -19,10 +19,11 @@
 
 ## 3. 테이블
 
+### 테이블명 : PGCAL02
 | 한글명  |      컬럼명      |   사이즈   |     비고      |
 |:----:|:-------------:|:-------:|:-----------:|
 | 국가코드 | country_code  | char(3) |  지원국가코드 참조  |
- |  날짜  |   trd_date    | char(8) |  yyyyMMdd   |
+|  날짜  |   trd_date    | char(8) |  yyyyMMdd   |
 |  요일  |  day_of_week  | char(1) |  월:0 ~ 일:6  |
 | 휴일구분 | legal_holiday | char(1) | 휴일:Y, 영업일:N |
 
