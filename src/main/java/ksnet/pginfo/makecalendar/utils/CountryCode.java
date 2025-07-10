@@ -1,7 +1,13 @@
 package ksnet.pginfo.makecalendar.utils;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -35,5 +41,9 @@ public enum CountryCode {
             }
         }
         throw new IllegalArgumentException("Invalid alpha-2 country code: " + code);
+    }
+
+    public static List<CountryCode> countryCodeAll() {
+        return new ArrayList<>(Arrays.asList(values()));
     }
 }
