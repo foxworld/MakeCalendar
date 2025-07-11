@@ -1,6 +1,6 @@
 package ksnet.pginfo.makecalendar.controller;
 
-import ksnet.pginfo.makecalendar.servicee.MakeCalendarService;
+import ksnet.pginfo.makecalendar.service.MakeCalendarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package ksnet.pginfo.makecalendar.servicee;
+package ksnet.pginfo.makecalendar.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -12,10 +12,9 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class KoreaHolidayScraper {
-
+public class SingaporeHolidayScraper {
     public List<Holiday> getHolidays(int year) throws Exception {
-        String url = "https://www.timeanddate.com/holidays/south-korea/" + year;
+        String url = "https://www.timeanddate.com/holidays/singapore/"+year;
         Document doc = Jsoup.connect(url).get();
 
         List<Holiday> holidays = new ArrayList<>();
@@ -29,15 +28,13 @@ public class KoreaHolidayScraper {
             String date = null;
             Elements ths = row.select("th");
             if (!ths.isEmpty()) {
-                date = Holiday.toYyyyMMdd(ths.get(0).text().trim() + " " + year);
+                date = Holiday.toYyyyMMdd(ths.get(0).text().trim()+ " " + year);
             }
-
             Elements tds = row.select("td");
             if (tds.size() >= 3) {
                 String name = tds.get(1).text();      // 휴일명
                 String type = tds.get(2).text();      // 유형 (공휴일, 관측일 등)
-                if ("Public Holiday".equalsIgnoreCase(type) || "National Holiday".equalsIgnoreCase(type)
-                || "Bank Holiday".equalsIgnoreCase(type)) {
+                if (type.toLowerCase().contains("national holiday")) {
                     holidays.add(new Holiday(date, name, type));
                 }
             }

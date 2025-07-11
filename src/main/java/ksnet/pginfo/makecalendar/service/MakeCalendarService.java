@@ -1,4 +1,4 @@
-package ksnet.pginfo.makecalendar.servicee;
+package ksnet.pginfo.makecalendar.service;
 
 import ksnet.pginfo.makecalendar.domain.PgCal02;
 import ksnet.pginfo.makecalendar.domain.PgCal03;
@@ -22,12 +22,7 @@ public class MakeCalendarService {
 
     private final PgCal02Repository pgCal02Repository;
     private final PgCal03Repository pgCal03Repository;
-    private final KoreaHolidayScraper koreaHolidayScraper;
-    private final UsHolidayScraper usHolidayScraper;
-    private final SingaporeHolidayScraper singaporeHolidayScraper;
-    private final HongKongHolidayScraper hongKongHolidayScraper;
-    private final ChinaHolidayScraper chinaHolidayScraper;
-    private final JapanHolidayScraper japanHolidayScraper;
+    private final TimeAndDateHolidayScraper scraper;
 
     public void makeCalendar(String countryCode, int year) throws Exception {
         CountryCode code = CountryCode.fromAlpha3(countryCode);
@@ -56,18 +51,8 @@ public class MakeCalendarService {
     }
 
     public void setHoliday(CountryCode countryCode, int year) throws Exception {
-        List<Holiday> holidayList = new ArrayList<>();
-        switch (countryCode.name()) {
-            case "KOR" -> holidayList = koreaHolidayScraper.getHolidays(year);
-            case "USA" -> holidayList = usHolidayScraper.getFederalHolidays(year);
-            case "SGP" -> holidayList = singaporeHolidayScraper.getHolidays(year);
-            case "HKG" -> holidayList = hongKongHolidayScraper.getHolidays(year);
-            case "CHN" -> holidayList = chinaHolidayScraper.getHolidays(year);
-            case "JPN" -> holidayList = japanHolidayScraper.getHolidays(year);
-            default -> {
-                return;
-            }
-        }
+
+        List<Holiday> holidayList = scraper.getHolidays(countryCode.name(), year);
         for(Holiday holiday : holidayList) {
             pgCal02Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y");
             pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());

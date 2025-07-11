@@ -1,4 +1,4 @@
-package ksnet.pginfo.makecalendar.servicee;
+package ksnet.pginfo.makecalendar.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
