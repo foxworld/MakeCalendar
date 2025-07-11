@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public enum TimeAndDateScrapCountryCode {
-    KRW("KRW", "South Korea", "south-korea"),
+    KOR("KOR", "South Korea", "south-korea"),
     JPN("JPN", "Japan", "japan"),
     HKG("HKG", "Hong Kong", "hong-kong"),
     SGP("SGP", "Singapore", "singapore"),
