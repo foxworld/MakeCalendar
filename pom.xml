@@ -88,6 +88,17 @@
 			<artifactId>hibernate-community-dialects</artifactId>
 		</dependency>
 
+		<!-- Selenium for JS-rendered pages and WebDriverManager to manage browser driver -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.4.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

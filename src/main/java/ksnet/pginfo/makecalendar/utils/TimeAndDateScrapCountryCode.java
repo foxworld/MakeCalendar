@@ -1,25 +1,24 @@
 package ksnet.pginfo.makecalendar.utils;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 public enum TimeAndDateScrapCountryCode {
-    KOR("KOR", "South Korea", "south-korea"),
-    JPN("JPN", "Japan", "japan"),
-    HKG("HKG", "Hong Kong", "hong-kong"),
-    SGP("SGP", "Singapore", "singapore"),
-    USA("USA", "United States", "us"),
-    CHN("CHN", "China", "china"),
-    TWN("TWN", "Taiwan", "taiwan"),
-    GBR("GBR", "United Kingdom", "uk");
+    KOR("KOR", "South Korea", "south-korea", "KR"),
+    JPN("JPN", "Japan", "japan", "JP"),
+    HKG("HKG", "Hong Kong", "hong-kong", "HK"),
+    SGP("SGP", "Singapore", "singapore", "SG"),
+    USA("USA", "United States", "us", "US"),
+    CHN("CHN", "China", "china", "CN"),
+    TWN("TWN", "Taiwan", "taiwan", "TW"),
+    GBR("GBR", "United Kingdom", "uk", "GB");
 
     private final String code;
     private final String fullName;
     private final String urlPath;
+    private final String iso2;
 
     public static TimeAndDateScrapCountryCode fromCode(String code) {
         for (TimeAndDateScrapCountryCode c : values()) {

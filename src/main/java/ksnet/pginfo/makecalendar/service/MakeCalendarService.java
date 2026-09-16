@@ -22,7 +22,7 @@ public class MakeCalendarService {
 
     private final PgCal02Repository pgCal02Repository;
     private final PgCal03Repository pgCal03Repository;
-    private final TimeAndDateHolidayScraper scraper;
+    private final PublicHolidayApiClient scraper;
 
     public void makeCalendar(String countryCode, int year) throws Exception {
         CountryCode code = CountryCode.fromAlpha3(countryCode);
