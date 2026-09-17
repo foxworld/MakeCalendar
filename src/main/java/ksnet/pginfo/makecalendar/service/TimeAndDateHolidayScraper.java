@@ -1,5 +1,6 @@
 package ksnet.pginfo.makecalendar.service;
 
+import ksnet.pginfo.makecalendar.utils.CountryCode;
 import ksnet.pginfo.makecalendar.utils.TimeAndDateScrapCountryCode;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;

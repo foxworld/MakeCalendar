@@ -22,7 +22,8 @@ public class MakeCalendarService {
 
     private final PgCal02Repository pgCal02Repository;
     private final PgCal03Repository pgCal03Repository;
-    private final PublicHolidayApiClient scraper;
+    private final PublicHolidayApiClient publicHolidayApiClient;
+    private final ChinaHolidayApiClient chinaHolidayApiClient;
 
     public void makeCalendar(String countryCode, int year) throws Exception {
         makeCalendar(countryCode, year, false);
@@ -53,7 +54,12 @@ public class MakeCalendarService {
 
     public void setHoliday(CountryCode countryCode, int year) throws Exception {
 
-        List<Holiday> holidayList = scraper.getHolidays(countryCode.name(), year);
+        List<Holiday> holidayList = new ArrayList<>();
+        if(countryCode == CountryCode.CHN) {
+            holidayList = chinaHolidayApiClient.getHolidays(year);
+        }else {
+            holidayList = publicHolidayApiClient.getHolidays(countryCode.name(), year);
+        }
         for(Holiday holiday : holidayList) {
             pgCal02Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y");
             pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
