@@ -71,7 +71,7 @@ public class ChinaHolidayApiClient {
                     continue;
                 }
 
-                String target = node.path("target").asText(null);;
+                String target = node.path("target").asText(null);
                 String translateName = ChinaHolidayCode.translateToKorean(name, target);
 
                 holidays.add(new Holiday(Holiday.toYyyyMMdd(dateIso), translateName, "public holiday"));

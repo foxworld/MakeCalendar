@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ksnet.pginfo</groupId>
 	<artifactId>MakeCalendar</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>MakeCalendar</name>
 	<description>KSNET INC. PETER HOON LEE</description>
 	<url/>
