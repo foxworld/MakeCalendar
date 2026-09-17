@@ -41,4 +41,10 @@ class MakeCalendarServiceTest {
         service.makeCalendar("CHN", 2026);
     }
 
+    @Test
+    void testMakeCalendarWithChinaCodeOnlyHoliday() throws Exception {
+        log.info("Running MakeCalendarServiceTest for a specific china code with only holiday processing...");
+        service.makeCalendar("CHN", 2026, true);
+    }
+
 }
