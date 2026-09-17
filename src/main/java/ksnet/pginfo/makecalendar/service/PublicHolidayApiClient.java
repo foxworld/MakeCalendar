@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksnet.pginfo.makecalendar.utils.TimeAndDateScrapCountryCode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -16,6 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class PublicHolidayApiClient {
+    @Value("${ksnet.pginfo.date-nager-at.url}") private String apiUrl;
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -29,16 +31,17 @@ public class PublicHolidayApiClient {
         try {
             TimeAndDateScrapCountryCode code = TimeAndDateScrapCountryCode.fromCode(countryAlpha3);
             String iso2 = code.getIso2();
-            String apiUrl = "https://date.nager.at/api/v3/PublicHolidays/" + year + "/" + iso2;
+            String url = apiUrl + year + "/" + iso2;
+            log.info("Fetching public holidays from API: {}", url);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
+                    .uri(URI.create(url))
                     .header("User-Agent", "MakeCalendar/1.0")
                     .GET()
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                log.warn("PublicHoliday API returned {} for {}", response.statusCode(), apiUrl);
+                log.warn("PublicHoliday API returned {} for {}", response.statusCode(), url);
                 return holidays;
             }
 
@@ -48,7 +51,12 @@ public class PublicHolidayApiClient {
             for (JsonNode node : arr) {
                 String dateIso = node.path("date").asText(null); // yyyy-MM-dd
                 if (dateIso == null || dateIso.isBlank()) continue;
-                String name = node.path("localName").asText(node.path("name").asText(null));
+                String name="";
+                if(code.getCode().equals("KOR")) {
+                    name = node.path("localName").asText(node.path("name").asText(null));
+                } else {
+                    name = node.path("name").asText(node.path("localName").asText(null));
+                }
                 boolean global = node.path("global").asBoolean(false);
                 String type = global ? "public holiday" : "local holiday";
                 String dateFormatted = Holiday.toYyyyMMdd(dateIso);
