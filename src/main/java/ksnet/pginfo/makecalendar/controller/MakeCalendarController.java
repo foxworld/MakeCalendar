@@ -79,7 +79,18 @@ public class MakeCalendarController implements ApplicationRunner {
     }
 
     private void printUsage() {
-        log.info("Usage: java -jar MakeCalendar-0.0.1.jar --COUNTRY-CODE=ALL --YEAR=2026 --ONLY-HOLIDAY=true|false");
-        log.info("Allowed COUNTRY-CODE: ALL, TEST, KOR, USA, JPN, SGP, HKG, CHN");
+        System.out.println();
+        System.out.println("============================================================");
+        System.out.println("Usage:");
+        System.out.println("  java -Dspring.profiles.active=prod -jar MakeCalendar-x.x.x.jar \\");
+        System.out.println("      --COUNTRY-CODE=ALL|KOR|USA|JPN|SGP|HKG|CHN \\");
+        System.out.println("      --YEAR=2025 [--ONLY-HOLIDAY=true|false]");
+        System.out.println();
+        System.out.println("Parameters:");
+        System.out.println("  COUNTRY-CODE : ALL, KOR, USA, JPN, SGP, HKG, CHN");
+        System.out.println("  YEAR         : Positive integer (example: 2025)");
+        System.out.println("  ONLY-HOLIDAY : Optional boolean flag (default: false)");
+        System.out.println("============================================================");
+        System.out.println();
     }
 }
