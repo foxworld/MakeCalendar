@@ -25,30 +25,31 @@ public class MakeCalendarService {
     private final PublicHolidayApiClient scraper;
 
     public void makeCalendar(String countryCode, int year) throws Exception {
+        makeCalendar(countryCode, year, false);
+    }
+
+    public void makeCalendar(String countryCode, int year, boolean onlyHoliday) throws Exception {
         CountryCode code = CountryCode.fromAlpha3(countryCode);
-        makeDateLoop(code, year);
+        if (!onlyHoliday) {
+            makeDateLoop(code, year);
+        }
         setHoliday(code, year);
     }
 
+
     public void makeCalendar(int year) throws Exception {
-        makeDateLoop(CountryCode.KOR, year);
-        setHoliday(CountryCode.KOR, year);
-
-        makeDateLoop(CountryCode.USA, year);
-        setHoliday(CountryCode.USA, year);
-
-        makeDateLoop(CountryCode.SGP, year);
-        setHoliday(CountryCode.SGP, year);
-
-        makeDateLoop(CountryCode.HKG, year);
-        setHoliday(CountryCode.HKG, year);
-
-        makeDateLoop(CountryCode.CHN, year);
-        setHoliday(CountryCode.CHN, year);
-
-        makeDateLoop(CountryCode.JPN, year);
-        setHoliday(CountryCode.JPN, year);
+        makeCalendar(year, false);
     }
+
+    public void makeCalendar(int year, boolean onlyHoliday) throws Exception {
+        for (CountryCode countryCode : CountryCode.countryCodeAll()) {
+            if (!onlyHoliday) {
+                makeDateLoop(countryCode, year);
+            }
+            setHoliday(countryCode, year);
+        }
+    }
+
 
     public void setHoliday(CountryCode countryCode, int year) throws Exception {
 

@@ -2,7 +2,7 @@ package ksnet.pginfo.makecalendar.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksnet.pginfo.makecalendar.utils.TimeAndDateScrapCountryCode;
+import ksnet.pginfo.makecalendar.utils.CountryCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,9 +29,8 @@ public class PublicHolidayApiClient {
     public List<Holiday> getHolidays(String countryAlpha3, int year) {
         List<Holiday> holidays = new ArrayList<>();
         try {
-            TimeAndDateScrapCountryCode code = TimeAndDateScrapCountryCode.fromCode(countryAlpha3);
-            String iso2 = code.getIso2();
-            String url = apiUrl + year + "/" + iso2;
+            CountryCode countryCode = CountryCode.fromAlpha3(countryAlpha3);
+            String url = apiUrl + year + "/" + countryCode.getAlpha2Code();
             log.info("Fetching public holidays from API: {}", url);
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -52,7 +51,7 @@ public class PublicHolidayApiClient {
                 String dateIso = node.path("date").asText(null); // yyyy-MM-dd
                 if (dateIso == null || dateIso.isBlank()) continue;
                 String name="";
-                if(code.getCode().equals("KOR")) {
+                if(countryCode.equals(CountryCode.KOR)) {
                     name = node.path("localName").asText(node.path("name").asText(null));
                 } else {
                     name = node.path("name").asText(node.path("localName").asText(null));
