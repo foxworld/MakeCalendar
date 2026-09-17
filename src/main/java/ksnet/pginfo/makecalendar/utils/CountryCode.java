@@ -17,7 +17,10 @@ public enum CountryCode {
     JPN("JP", "Japan", "일본", "JPY", "엔", "392"),
     CHN("CN", "China", "중국", "CNY", "위안", "156"),
     HKG("HK", "Hong Kong", "홍콩", "HKD", "홍콩달러", "344"),
-    SGP("SG", "Singapore", "싱가포르", "SGD", "싱가포르달러", "702");
+    SGP("SG", "Singapore", "싱가포르", "SGD", "싱가포르달러", "702"),
+    TWN("TW", "Taiwan", "대만", "TWD", "대만달러", "901"),
+    GBR("GB", "United Kingdom", "영국", "GBP", "파운드", "826"),
+    VNM("VN", "Vietnam", "베트남", "VND", "동", "704");
 
     private final String alpha2Code;
     private final String englishName;

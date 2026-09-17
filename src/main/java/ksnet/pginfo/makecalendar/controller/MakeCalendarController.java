@@ -1,6 +1,7 @@
 package ksnet.pginfo.makecalendar.controller;
 
 import ksnet.pginfo.makecalendar.service.MakeCalendarService;
+import ksnet.pginfo.makecalendar.utils.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,11 +46,17 @@ public class MakeCalendarController implements ApplicationRunner {
             return;
         }
 
-        switch (countryCode) {
+        switch (countryCode.toUpperCase()) {
             case "TEST" -> log.info("TEST!!");
             case "ALL" -> service.makeCalendar(parsedYear);
-            case "USA","JPN","KOR","SGP","HKG","CHN" -> service.makeCalendar(countryCode, parsedYear);
-            default -> log.info("미지원하는 국가코드 입니다. 국가코드:{}", countryCode);
+            default -> {
+                try {
+                    CountryCode selectedCountry = CountryCode.valueOf(countryCode.toUpperCase());
+                    service.makeCalendar(selectedCountry.name(), parsedYear);
+                } catch (IllegalArgumentException e) {
+                    log.info("미지원하는 국가코드 입니다. 국가코드:{}", countryCode);
+                }
+            }
         }
     }
 }
