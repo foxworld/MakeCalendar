@@ -1,5 +1,6 @@
 package ksnet.pginfo.makecalendar.service;
 
+import jakarta.annotation.PostConstruct;
 import ksnet.pginfo.makecalendar.domain.PgCal01;
 import ksnet.pginfo.makecalendar.domain.PgCal02;
 import ksnet.pginfo.makecalendar.domain.PgCal03;
@@ -9,6 +10,7 @@ import ksnet.pginfo.makecalendar.repository.PgCal03Repository;
 import ksnet.pginfo.makecalendar.utils.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -21,11 +23,22 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MakeCalendarService {
+    @Value("${spring.profiles.active:dev}") private String activeProfile;
+    private boolean isProd;
+
     private final JpaPgCal01Repository jpaPgCal01Repository;
     private final PgCal02Repository pgCal02Repository;
     private final PgCal03Repository pgCal03Repository;
     private final PublicHolidayApiClient publicHolidayApiClient;
     private final ChinaHolidayApiClient chinaHolidayApiClient;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    // @PostConstruct를 통해 객체 생성 및 주입이 완료된 후 isProd 값 세팅
+    @PostConstruct
+    private void init() {
+        this.isProd = "prod".equalsIgnoreCase(activeProfile);
+    }
 
     public void makeCalendar(String countryCode, int year) throws Exception {
         makeCalendar(countryCode, year, false);
@@ -52,7 +65,6 @@ public class MakeCalendarService {
         }
     }
 
-
     private void setHoliday(CountryCode countryCode, int year) throws Exception {
 
         List<Holiday> holidayList = new ArrayList<>();
@@ -66,26 +78,36 @@ public class MakeCalendarService {
                 jpaPgCal01Repository.setHoliday(holiday.getDate(),"0");
             }
             pgCal02Repository.setHoliday(countryCode.getCurrencyNumericCode(), holiday.getDate(), "Y");
-            pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
+
+            /*개발만 동작한다 */
+            if(!isProd) {
+                pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
+            }
         }
     }
 
     private void makeDateLoop(CountryCode countryCode, int year) {
-        LocalDate startDate = LocalDate.parse(year+"0101", DateTimeFormatter.ofPattern("yyyyMMdd"));
-        LocalDate endDate = LocalDate.parse(year+"1231", DateTimeFormatter.ofPattern("yyyyMMdd"));
+        LocalDate startDate = LocalDate.of(year, 1, 1);
+        LocalDate endDate = LocalDate.of(year, 12, 31);
 
         int i=0;
         while (!startDate.isAfter(endDate)) {
-            String trdDate = startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String trdDate = startDate.format(DATE_FORMATTER);
             String dayOfWeek = Integer.toString(startDate.getDayOfWeek().getValue() - 1);
-            String isHolidayPgCal01 = (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"0":"1");
-            String isHoliday = (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N");
+            boolean isWeekend = (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY);
+
+            String isHolidayPgCal01 = isWeekend ? "0" : "1";
+            String isHoliday = isWeekend ? "Y" : "N";
 
             if(countryCode.equals(CountryCode.KOR)) {
                 jpaPgCal01Repository.save(new PgCal01(trdDate, isHolidayPgCal01, dayOfWeek));
             }
             pgCal02Repository.save(new PgCal02(countryCode.getCurrencyNumericCode(), trdDate, dayOfWeek, isHoliday));
-            pgCal03Repository.save(new PgCal03(countryCode.name(), trdDate, dayOfWeek, isHoliday));
+
+            /*개발만 동작한다 */
+            if(!isProd) {
+                pgCal03Repository.save(new PgCal03(countryCode.name(), trdDate, dayOfWeek, isHoliday));
+            }
 
             startDate = startDate.plusDays(1); // 하루 증가
         }
