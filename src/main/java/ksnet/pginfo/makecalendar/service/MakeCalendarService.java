@@ -1,6 +1,7 @@
 package ksnet.pginfo.makecalendar.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import ksnet.pginfo.makecalendar.domain.PgCal01;
 import ksnet.pginfo.makecalendar.domain.PgCal02;
 import ksnet.pginfo.makecalendar.domain.PgCal03;
@@ -23,8 +24,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MakeCalendarService {
-    @Value("${spring.profiles.active:dev}") private String activeProfile;
-    private boolean isProd;
+    @Value("${spring.profiles.active:prod}") private String activeProfile;
+    private boolean isDev;
 
     private final JpaPgCal01Repository jpaPgCal01Repository;
     private final PgCal02Repository pgCal02Repository;
@@ -37,13 +38,14 @@ public class MakeCalendarService {
     // @PostConstruct를 통해 객체 생성 및 주입이 완료된 후 isProd 값 세팅
     @PostConstruct
     private void init() {
-        this.isProd = "prod".equalsIgnoreCase(activeProfile);
+        this.isDev = "dev".equalsIgnoreCase(activeProfile);
     }
 
     public void makeCalendar(String countryCode, int year) throws Exception {
         makeCalendar(countryCode, year, false);
     }
 
+    @Transactional
     public void makeCalendar(String countryCode, int year, boolean onlyHoliday) throws Exception {
         CountryCode code = CountryCode.fromAlpha3(countryCode);
         if (!onlyHoliday) {
@@ -56,6 +58,7 @@ public class MakeCalendarService {
         makeCalendar(year, false);
     }
 
+    @Transactional
     public void makeCalendar(int year, boolean onlyHoliday) throws Exception {
         for (CountryCode countryCode : CountryCode.countryCodeAll()) {
             if (!onlyHoliday) {
@@ -80,7 +83,7 @@ public class MakeCalendarService {
             pgCal02Repository.setHoliday(countryCode.getCurrencyNumericCode(), holiday.getDate(), "Y");
 
             /*개발만 동작한다 */
-            if(!isProd) {
+            if(isDev) {
                 pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
             }
         }
@@ -105,7 +108,7 @@ public class MakeCalendarService {
             pgCal02Repository.save(new PgCal02(countryCode.getCurrencyNumericCode(), trdDate, dayOfWeek, isHoliday));
 
             /*개발만 동작한다 */
-            if(!isProd) {
+            if(isDev) {
                 pgCal03Repository.save(new PgCal03(countryCode.name(), trdDate, dayOfWeek, isHoliday));
             }
 
