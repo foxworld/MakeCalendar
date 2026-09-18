@@ -63,11 +63,7 @@ public class MakeCalendarService {
         }
         for(Holiday holiday : holidayList) {
             if(countryCode.equals(CountryCode.KOR)) {
-                jpaPgCal01Repository.setHoliday(
-                        holiday.getDate(),
-                        "0",
-                        Integer.toString(LocalDate.parse(holiday.getDate(), DateTimeFormatter.ofPattern("yyyyMMdd")).getDayOfWeek().getValue() - 1)
-                );
+                jpaPgCal01Repository.setHoliday(holiday.getDate(),"0");
             }
             pgCal02Repository.setHoliday(countryCode.getCurrencyNumericCode(), holiday.getDate(), "Y");
             pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
@@ -80,29 +76,16 @@ public class MakeCalendarService {
 
         int i=0;
         while (!startDate.isAfter(endDate)) {
+            String trdDate = startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String dayOfWeek = Integer.toString(startDate.getDayOfWeek().getValue() - 1);
+            String isHolidayPgCal01 = (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"0":"1");
+            String isHoliday = (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N");
+
             if(countryCode.equals(CountryCode.KOR)) {
-                jpaPgCal01Repository.save(new PgCal01(
-                        startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-                        (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"0":"1"),
-                        Integer.toString(startDate.getDayOfWeek().getValue() - 1)
-                ));
+                jpaPgCal01Repository.save(new PgCal01(trdDate, isHolidayPgCal01, dayOfWeek));
             }
-
-            PgCal02 pgCal02 = new PgCal02(
-                    countryCode.getCurrencyNumericCode(),
-                    startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-                    Integer.toString(startDate.getDayOfWeek().getValue() - 1),
-                    (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N")
-            );
-            pgCal02Repository.save(pgCal02);
-
-            PgCal03 pgCal03 = new PgCal03(
-                    countryCode.name(),
-                    startDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-                    Integer.toString(startDate.getDayOfWeek().getValue() - 1),
-                    (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY?"Y":"N")
-            );
-            pgCal03Repository.save(pgCal03);
+            pgCal02Repository.save(new PgCal02(countryCode.getCurrencyNumericCode(), trdDate, dayOfWeek, isHoliday));
+            pgCal03Repository.save(new PgCal03(countryCode.name(), trdDate, dayOfWeek, isHoliday));
 
             startDate = startDate.plusDays(1); // 하루 증가
         }

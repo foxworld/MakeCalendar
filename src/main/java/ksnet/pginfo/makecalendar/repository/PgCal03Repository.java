@@ -27,9 +27,10 @@ public class PgCal03Repository {
     }
 
     public PgCal03 setHoliday( String countryCode, String tradeDate, String legalHoliday, String description) {
-        Optional<PgCal03> findPgCal03 = repository.findById(new PgCal03Key(countryCode, tradeDate));
-        PgCal03 pgCal03 = findPgCal03.orElseThrow(() ->
-                new IllegalArgumentException("PgCal03 not found for country code: " + countryCode + ", trade date: " + tradeDate));
+        PgCal03 pgCal03 = repository.findById(new PgCal03Key(countryCode, tradeDate)).orElse(null);
+        if (pgCal03 == null) {
+            throw new IllegalArgumentException("PgCal03 not found for country code: " + countryCode + ", trade date: " + tradeDate);
+        }
         pgCal03.setLegalHoliday(legalHoliday);
         pgCal03.setDescription(description);
         repository.save(pgCal03);
