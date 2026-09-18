@@ -18,21 +18,21 @@ class MakeCalendarServiceTest {
     }
 
     @Test
-    void testMakeCalendarWithCountryCode() throws Exception {
-        log.info("Running MakeCalendarServiceTest for a specific country code...");
+    void testMakeCalendarWithKoreaCode() throws Exception {
+        log.info("Running MakeCalendarServiceTest for a specific Korea code...");
         service.makeCalendar("KOR", 2026);
+    }
+
+    @Test
+    void testMakeCalendarWithKoreaCodeOnlyHoliday() throws Exception {
+        log.info("Running MakeCalendarServiceTest for a specific Korea code with only holiday processing...");
+        service.makeCalendar("KOR", 2026, true);
     }
 
     @Test
     void testMakeCalendarOnlyHoliday() throws Exception {
         log.info("Running MakeCalendarServiceTest with only holiday processing...");
         service.makeCalendar(2026, true);
-    }
-
-    @Test
-    void testMakeCalendarWithCountryCodeOnlyHoliday() throws Exception {
-        log.info("Running MakeCalendarServiceTest for a specific country code with only holiday processing...");
-        service.makeCalendar("KOR", 2026, true);
     }
 
     @Test
