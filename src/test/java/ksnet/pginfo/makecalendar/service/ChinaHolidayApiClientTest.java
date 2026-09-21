@@ -1,5 +1,6 @@
 package ksnet.pginfo.makecalendar.service;
 
+import ksnet.pginfo.makecalendar.utils.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,9 @@ class ChinaHolidayApiClientTest {
 
     @Test
     void testGetHolidays() {
-        int year = 2026;
-        log.info("Testing getHolidays for year: {}", year);
+        int year = Integer.parseInt(DateTimeUtils.now(DateTimeUtils.YYYY));
+        String countryCode = "KOR";
+        log.info("Testing getHolidays for year: {} and country: {}", year, countryCode);
         var holidays = chinaHolidayApiClient.getHolidays(year);
         assertNotNull(holidays, "Holidays list should not be null");
         assertFalse(holidays.isEmpty(), "Holidays list should not be empty");

@@ -1,23 +1,19 @@
 package ksnet.pginfo.makecalendar.service;
 
-import ksnet.pginfo.makecalendar.utils.CountryCode;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import ksnet.pginfo.makecalendar.utils.TimeAndDateScrapCountryCode;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,32 +39,23 @@ public class TimeAndDateHolidayScraper {
                     .get();
         } catch (org.jsoup.HttpStatusException e) {
             if (e.getStatusCode() == 403) {
-                log.warn("Access blocked fetching {} (status 403). Attempting Selenium fallback.", url);
-                try {
-                    WebDriverManager.chromedriver().setup();
-                    ChromeOptions options = new ChromeOptions();
-                    // Use headless mode; adjust if you need to see the browser
-                    options.addArguments("--headless=new");
-                    options.addArguments("--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu");
-                    options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
-
-                    WebDriver driver = new ChromeDriver(options);
-                    try {
-                        driver.get(url);
-                        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-                        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("table.table--left.table--inner-borders-rows")));
-                        String pageSource = driver.getPageSource();
-                        doc = Jsoup.parse(pageSource, url);
-                    } finally {
-                        try { driver.quit(); } catch (Exception ex) { log.debug("Error quitting webdriver: {}", ex.getMessage()); }
-                    }
+                log.warn("Access blocked fetching {} (status 403). Attempting Playwright fallback.", url);
+                try (Playwright playwright = Playwright.create();
+                     Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+                     BrowserContext context = browser.newContext(new Browser.NewContextOptions()
+                             .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"));
+                     Page page = context.newPage()) {
+                    page.navigate(url, new Page.NavigateOptions().setTimeout(30_000));
+                    page.waitForSelector("table.table--left.table--inner-borders-rows",
+                            new Page.WaitForSelectorOptions().setTimeout(15_000));
+                    doc = Jsoup.parse(page.content(), url);
                 } catch (Exception ex) {
-                    log.warn("Selenium fallback failed for {}: {}. Returning empty holiday list.", url, ex.getMessage());
+                    log.warn("Playwright fallback failed for {}: {}. Returning empty holiday list.", url, ex.getMessage());
                     return holidays;
                 }
             }
             log.error("Failed to fetch holidays from {} (status {})", url, e.getStatusCode());
-            throw e;
+            throw new Exception("Failed to fetch holidays", e);
         }
 
         Element table = doc.selectFirst("table.table--left.table--inner-borders-rows");
@@ -99,4 +86,5 @@ public class TimeAndDateHolidayScraper {
         }
         return holidays;
     }
+
 }
