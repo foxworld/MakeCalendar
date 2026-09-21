@@ -331,6 +331,11 @@ public class Utils {
         }
     }
 
+	/**
+	 * 문자열에서 따옴표, 콤마 제거 및 EUC-KR에서 깨지는 문자 제거
+	 * @param input 원본 문자열
+	 * @return 정제된 문자열
+	 */
     public static String cleanText(String input) {
         if (!StringUtils.hasText(input)) return null;
 
