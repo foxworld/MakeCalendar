@@ -190,6 +190,11 @@ public class Utils {
 	}
 	
   	// 자기 IP 가져오기
+
+	/**
+	 * 자기 자신의 IP를 가져오는 함수
+	 * @return 자기 자신의 IP 주소, 가져오지 못하면 빈 문자열 반환
+	 */
   	public static String getMyIp(){
   	    try {
   	    	return InetAddress.getLocalHost().getHostAddress();
