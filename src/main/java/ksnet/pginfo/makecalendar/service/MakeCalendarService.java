@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -38,7 +39,17 @@ public class MakeCalendarService {
     // @PostConstruct를 통해 객체 생성 및 주입이 완료된 후 isProd 값 세팅
     @PostConstruct
     private void init() {
-        this.isProd = "prod".equalsIgnoreCase(activeProfile);
+        //this.isProd = "prod".equalsIgnoreCase(activeProfile);
+        if(!StringUtils.hasText(activeProfile)) {
+            log.warn("Active profile is not set. Defaulting to 'dev'.");
+            activeProfile = "dev";
+        } else if ("prod".equalsIgnoreCase(activeProfile) || "test".equalsIgnoreCase(activeProfile)) {
+            log.warn("Active profile '{}' is not recognized. Defaulting to 'dev'.", activeProfile);
+            this.isProd = true;
+        }
+        else {
+            this.isProd = false;
+        }
     }
 
     public void makeCalendar(String countryCode, int year) throws Exception {
