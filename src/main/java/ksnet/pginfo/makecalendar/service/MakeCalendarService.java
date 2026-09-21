@@ -24,8 +24,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class MakeCalendarService {
-    @Value("${spring.profiles.active:prod}") private String activeProfile;
-    private boolean isDev;
+    @Value("${spring.profiles.active:dev}") private String activeProfile;
+    private boolean isProd;
 
     private final JpaPgCal01Repository jpaPgCal01Repository;
     private final PgCal02Repository pgCal02Repository;
@@ -38,7 +38,7 @@ public class MakeCalendarService {
     // @PostConstruct를 통해 객체 생성 및 주입이 완료된 후 isProd 값 세팅
     @PostConstruct
     private void init() {
-        this.isDev = "dev".equalsIgnoreCase(activeProfile);
+        this.isProd = "prod".equalsIgnoreCase(activeProfile);
     }
 
     public void makeCalendar(String countryCode, int year) throws Exception {
@@ -83,7 +83,7 @@ public class MakeCalendarService {
             pgCal02Repository.setHoliday(countryCode.getCurrencyNumericCode(), holiday.getDate(), "Y");
 
             /*개발만 동작한다 */
-            if(isDev) {
+            if(!isProd) {
                 pgCal03Repository.setHoliday(countryCode.name(), holiday.getDate(), "Y", holiday.getName());
             }
         }
@@ -108,7 +108,7 @@ public class MakeCalendarService {
             pgCal02Repository.save(new PgCal02(countryCode.getCurrencyNumericCode(), trdDate, dayOfWeek, isHoliday));
 
             /*개발만 동작한다 */
-            if(isDev) {
+            if(!isProd) {
                 pgCal03Repository.save(new PgCal03(countryCode.name(), trdDate, dayOfWeek, isHoliday));
             }
 
