@@ -2,19 +2,12 @@ package ksnet.pginfo.makecalendar.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksnet.pginfo.makecalendar.utils.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +28,7 @@ public class KoreaHolidayApiClient {
 
             String responseBody = webClientService.callApi(url);
             //log.info("responseBody : {}", responseBody);
-            if (!StringUtils.hasText(responseBody) || responseBody.trim().isEmpty()) {
+            if (!StringUtils.hasText(responseBody)) {
                 return holidays;
             }
 

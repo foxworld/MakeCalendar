@@ -5,8 +5,8 @@
  |_|  |_|\__,_|_|\_\___|  \____\__,_|_|\___|_| |_|\__,_|\__,_|_|
 
  :: Spring Boot :: Version: ${spring-boot.version}
- :: Make Calendar System - ${spring.profiles.active} ::
- ? DB URL: ${spring.datasource.url}
- ? DB User: ${spring.datasource.username}
+ :: Make Calendar System - ${spring.profiles.active}
+ :: DB URL: ${spring.datasource.url}
+ :: DB User: ${spring.datasource.username}
 
  ### 달력 생성프로그램(국내,해외 휴일설정 포함) ###

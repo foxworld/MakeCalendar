@@ -1,6 +1,5 @@
 package ksnet.pginfo.makecalendar.service;
 
-import ksnet.pginfo.makecalendar.config.WebClientConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +19,6 @@ public class WebClientService {
     private final WebClient webClient;
 
     public String callApi(String url) {
-        // 1. URI 빌드 (Map에 담긴 파라미터를 자동으로 쿼리 스트링으로 변환)
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
         URI uri = builder.build().encode().toUri();
 

@@ -27,7 +27,7 @@ import java.util.Map;
 public class ChinaHolidayApiClient {
     @Value("${ksnet.pginfo.timor-tech.url}") private String apiUrl;
 
-    private final WebClient webClient;
+    private final WebClientService webClientService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<Holiday> getHolidays(int year) {
@@ -35,8 +35,9 @@ public class ChinaHolidayApiClient {
         try {
             String url = apiUrl + year + "/";
             log.info("Fetching public holidays from API: {}", url);
-            String responseBody = callApi(url);
-            if (!StringUtils.hasText(responseBody) || responseBody.trim().isEmpty()) {
+            String responseBody = webClientService.callApi(url);
+            //log.info("responseBody : {}", responseBody);
+            if (!StringUtils.hasText(responseBody)) {
                 return holidays;
             }
 
@@ -79,31 +80,6 @@ public class ChinaHolidayApiClient {
         } catch (Exception ex) {
             log.warn("Failed to fetch/parse PublicHoliday API: {}", ex.getMessage());
             return holidays;
-        }
-    }
-
-    private String callApi(String url) {
-        // 1. URI 빌드 (Map에 담긴 파라미터를 자동으로 쿼리 스트링으로 변환)
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
-        URI uri = builder.build().encode().toUri();
-
-        try {
-            // 동기 처리
-            return webClient.get()
-                    .uri(uri)
-                    .header("User-Agent", "MakeCalendar/1.0")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .exchangeToMono(response -> {
-                        if (!response.statusCode().is2xxSuccessful()) {
-                            log.error("PublicHoliday API returned {} for {}", response.statusCode(), url);
-                            return response.releaseBody().then(Mono.empty());
-                        }
-                        return response.bodyToMono(String.class);
-                    })
-                    .block();
-        } catch (Exception ex) {
-            log.error("Failed to call PublicHoliday API: {}", ex.getMessage());
-            return null;
         }
     }
 }
