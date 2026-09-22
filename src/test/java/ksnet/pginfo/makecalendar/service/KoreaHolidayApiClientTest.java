@@ -11,16 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
-class ChinaHolidayApiClientTest {
+class KoreaHolidayApiClientTest {
 
-    @Autowired ChinaHolidayApiClient chinaHolidayApiClient;
+    @Autowired KoreaHolidayApiClient koreaHolidayApiClient;
 
     @Test
     void testGetHolidays() {
         int year = Integer.parseInt(DateTimeUtils.now(DateTimeUtils.YYYY));
         String countryCode = "KOR";
         log.info("Testing getHolidays for year: {} and country: {}", year, countryCode);
-        var holidays = chinaHolidayApiClient.getHolidays(year);
+        var holidays = koreaHolidayApiClient.getHolidays(year);
         assertNotNull(holidays, "Holidays list should not be null");
         assertFalse(holidays.isEmpty(), "Holidays list should not be empty");
 
@@ -30,7 +30,6 @@ class ChinaHolidayApiClientTest {
             assertNotNull(holiday.getDate(), "Holiday date should not be null");
         }
     }
-
 
 
 }

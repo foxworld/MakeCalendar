@@ -75,11 +75,12 @@ public class TimeAndDateHolidayScraper {
                 String name = tds.get(1).text();      // 휴일명
                 String type = tds.get(2).text();      // 유형 (공휴일, 관측일 등)
                 switch (type.toLowerCase()) {
-                    case "public holiday", "federal holiday", "national holiday" -> {
-                    }
-                    default -> {
+                    case "public holiday":
+                    case "federal holiday":
+                    case "national holiday":
+                        break;
+                    default :
                         continue;
-                    }
                 }
                 holidays.add(new Holiday(date, name, type));
             }

@@ -1,7 +1,7 @@
 package ksnet.pginfo.makecalendar.service;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import ksnet.pginfo.makecalendar.domain.PgCal01;
 import ksnet.pginfo.makecalendar.domain.PgCal02;
 import ksnet.pginfo.makecalendar.domain.PgCal03;
@@ -33,6 +33,7 @@ public class MakeCalendarService {
     private final PgCal03Repository pgCal03Repository;
     private final PublicHolidayApiClient publicHolidayApiClient;
     private final ChinaHolidayApiClient chinaHolidayApiClient;
+    private final KoreaHolidayApiClient koreaHolidayApiClient;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
@@ -43,7 +44,8 @@ public class MakeCalendarService {
         if(!StringUtils.hasText(activeProfile)) {
             log.warn("Active profile is not set. Defaulting to 'dev'.");
             activeProfile = "dev";
-        } else if ("prod".equalsIgnoreCase(activeProfile) || "test".equalsIgnoreCase(activeProfile)) {
+            this.isProd = false;
+        } else if ("prod".equalsIgnoreCase(activeProfile) /* || "test".equalsIgnoreCase(activeProfile)*/) {
             log.warn("Active profile '{}' is not recognized. Defaulting to 'dev'.", activeProfile);
             this.isProd = true;
         }
@@ -84,7 +86,9 @@ public class MakeCalendarService {
         List<Holiday> holidayList = new ArrayList<>();
         if(countryCode == CountryCode.CHN) {
             holidayList = chinaHolidayApiClient.getHolidays(year);
-        }else {
+        } else if(countryCode == CountryCode.KOR) {
+            holidayList = koreaHolidayApiClient.getHolidays(year);
+        } else {
             holidayList = publicHolidayApiClient.getHolidays(countryCode.name(), year);
         }
         for(Holiday holiday : holidayList) {

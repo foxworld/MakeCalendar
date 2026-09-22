@@ -39,7 +39,7 @@ public class PublicHolidayApiClient {
             log.info("Fetching public holidays from API: {}", url);
 
             String responseBody = callApi(url);
-            if (!StringUtils.hasText(responseBody) || responseBody.isBlank()) {
+            if (!StringUtils.hasText(responseBody) || responseBody.trim().isEmpty()) {
                 return holidays;
             }
 
@@ -48,7 +48,7 @@ public class PublicHolidayApiClient {
 
             for (JsonNode node : arr) {
                 String dateIso = node.path("date").asText(null); // yyyy-MM-dd
-                if (dateIso == null || dateIso.isBlank()) continue;
+                if (dateIso == null || dateIso.trim().isEmpty()) continue;
                 String name="";
                 if(countryCode.equals(CountryCode.KOR)) {
                     name = node.path("localName").asText(node.path("name").asText(null));
@@ -104,7 +104,7 @@ public class PublicHolidayApiClient {
 
         for (JsonNode node : arr) {
             String dateIso = node.path("date").asText(null); // yyyy-MM-dd
-            if (dateIso == null || dateIso.isBlank()) continue;
+            if (dateIso == null || dateIso.trim().isEmpty()) continue;
             String name="";
             if(countryCode.equals(CountryCode.KOR)) {
                 name = node.path("localName").asText(node.path("name").asText(null));

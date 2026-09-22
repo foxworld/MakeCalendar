@@ -2,6 +2,7 @@ package ksnet.pginfo.makecalendar.service;
 
 import ksnet.pginfo.makecalendar.utils.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

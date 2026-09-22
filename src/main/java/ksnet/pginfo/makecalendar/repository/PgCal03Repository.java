@@ -1,6 +1,6 @@
 package ksnet.pginfo.makecalendar.repository;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import ksnet.pginfo.makecalendar.domain.PgCal03;
 import ksnet.pginfo.makecalendar.domain.PgCal03Key;
 import lombok.RequiredArgsConstructor;

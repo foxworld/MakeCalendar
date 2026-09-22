@@ -34,9 +34,12 @@ public class MakeCalendarController implements ApplicationRunner {
         }
 
         switch (countryCode.toUpperCase()) {
-            case "TEST" -> log.info("TEST!!");
-            case "ALL" -> service.makeCalendar(parsedYear, onlyHoliday);
-            default -> {
+            case "TEST" : log.info("TEST!!");
+                break;
+            case "ALL" :
+                service.makeCalendar(parsedYear, onlyHoliday);
+                break;
+            default : {
                 try {
                     CountryCode selectedCountry = CountryCode.valueOf(countryCode.toUpperCase());
                     service.makeCalendar(selectedCountry.name(), parsedYear, onlyHoliday);
