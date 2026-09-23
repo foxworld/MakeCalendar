@@ -34,7 +34,10 @@ public class KoreaHolidayApiClient {
 
             JsonNode rootNode = mapper.readTree(responseBody);
             // response -> body -> items -> item 경로 탐색
-            JsonNode arr = rootNode.path("response").path("body").path("items").path("item");
+            JsonNode arr = rootNode.path("response")
+                    .path("body")
+                    .path("items")
+                    .path("item");
             //log.info("arr : {}", arr.toString());
 
             if (!arr.isArray()) return holidays;
